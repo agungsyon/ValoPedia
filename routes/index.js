@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const userRouter = require("./user");
 const errorHandling = require("../middlewares/errorHandling");
+const userRouter = require("./user");
+const valorantRouter = require("./valorant");
 
 router.use(userRouter);
+router.use(valorantRouter);
 
 router.use(errorHandling);
 
