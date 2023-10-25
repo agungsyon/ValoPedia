@@ -1,8 +1,8 @@
 const axios = require("axios");
 const midtransClient = require("midtrans-client");
-const { User } = require("../models");
+const { User, Inventory } = require("../models");
 
-class ValorantController {
+class Controller {
   static async fetchAgents(req, res, next) {
     try {
       const { data } = await axios({
@@ -45,18 +45,8 @@ class ValorantController {
           imageVertical: el.verticalPromoImage,
         };
       });
-      const ids = [
-        {
-          id: "a4937ee9-4148-8ff2-2c11-c28891880306",
-        },
-      ];
-      const filter = bundles.map((el) => {
-        return el.filter;
-      });
-      const id = "a4937ee9-4148-8ff2-2c11-c28891880306";
 
-      const filteredAgents = data.data.filter((agent) => agent.id == id);
-      res.status(200).json(data);
+      res.status(200).json(bundles);
     } catch (error) {
       console.log(error);
       next(error);
@@ -65,6 +55,11 @@ class ValorantController {
 
   static async midtransToken(req, res, next) {
     try {
+      let price = 100000;
+      if (req.body.bundleId) {
+        //kondisi jika hit dari postman error karna null gada length sebenernya gangaruh tapi risih aja error klo hit postman
+        price = (req.body.bundleId.length + req.body.name.length) * 20000;
+      }
       const id = req.user.id;
 
       const user = await User.findByPk(id);
@@ -78,7 +73,7 @@ class ValorantController {
       let parameter = {
         transaction_details: {
           order_id: "TRANSACTION_" + Math.floor(1000000 + Math.random() * 9000000), //unique
-          gross_amount: 10000,
+          gross_amount: price,
         },
         credit_card: {
           secure: true,
@@ -98,10 +93,27 @@ class ValorantController {
 
   static async postInventory(req, res, next) {
     try {
-      const { bundleId } = req.body;
-      console.log(bundleId);
-    } catch (error) {}
+      const { bundleId, name, imgUrl } = req.body;
+      const UserId = req.user.id;
+      const inventory = await Inventory.create({ UserId, bundleId, name, imgUrl });
+      res.status(201).json({ id: inventory.id, name: inventory.name });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
+  static async fetchInventory(req, res, next) {
+    try {
+      console.log(req.user.id);
+      const UserId = req.user.id;
+      const inventories = await Inventory.findAll({ where: { UserId } });
+      res.status(200).json(inventories);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
   }
 }
 
-module.exports = ValorantController;
+module.exports = Controller;

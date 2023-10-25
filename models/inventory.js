@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Inventory extends Model {
     /**
@@ -11,17 +9,64 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Inventory.hasMany(models.User)
+      Inventory.belongsTo(models.User);
     }
   }
-  Inventory.init({
-    UserId: DataTypes.INTEGER,
-    bundleId: DataTypes.STRING,
-    name: DataTypes.STRING,
-    imgUrl: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Inventory',
-  });
+  Inventory.init(
+    {
+      UserId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "UserId is required",
+          },
+          notNull: {
+            msg: "UserId is required",
+          },
+        },
+      },
+      bundleId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "BundleId is required",
+          },
+          notNull: {
+            msg: "BundleId is required",
+          },
+        },
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "Name is required",
+          },
+          notNull: {
+            msg: "Name is required",
+          },
+        },
+      },
+      imgUrl: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "Image is required",
+          },
+          notNull: {
+            msg: "Image is required",
+          },
+        },
+      },
+    },
+    {
+      sequelize,
+      modelName: "Inventory",
+    }
+  );
   return Inventory;
 };
