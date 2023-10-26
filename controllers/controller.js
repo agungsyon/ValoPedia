@@ -5,6 +5,7 @@ const { User, Inventory } = require("../models");
 class Controller {
   static async fetchAgents(req, res, next) {
     try {
+      const { page = 1 } = req.query;
       const { data } = await axios({
         method: "GET",
         url: "https://valorant-api.com/v1/agents",
@@ -21,7 +22,13 @@ class Controller {
           roleIcon: el.role ? el.role.displayIcon : null,
         };
       });
-      const filteredAgents = agents.filter((agent) => agent.role !== null);
+      let filteredAgents = agents.filter((agent) => agent.role !== null);
+      if (page) {
+        let limit = 8;
+        let index = (page - 1) * limit;
+        const pageAgents = filteredAgents.slice(index, index + limit);
+        return res.status(200).json(pageAgents);
+      }
 
       res.status(200).json(filteredAgents);
     } catch (error) {
@@ -32,6 +39,7 @@ class Controller {
 
   static async fetchBundles(req, res, next) {
     try {
+      const { page = 1 } = req.query;
       const { data } = await axios({
         method: "GET",
         url: "https://valorant-api.com/v1/bundles",
@@ -45,6 +53,13 @@ class Controller {
           imageVertical: el.verticalPromoImage,
         };
       });
+
+      if (page) {
+        let limit = 16;
+        let index = (page - 1) * limit;
+        const pageBundles = bundles.slice(index, index + limit);
+        return res.status(200).json(pageBundles);
+      }
 
       res.status(200).json(bundles);
     } catch (error) {

@@ -37,6 +37,14 @@ class UserController {
       next(error);
     }
   }
+
+  static async loginDiscord (req, res, next) {
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
 }
 
 module.exports = UserController;
