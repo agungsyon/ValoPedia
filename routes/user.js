@@ -4,6 +4,6 @@ const router = express.Router();
 
 router.post("/register", UserController.register);
 router.post("/login", UserController.login);
-router.post("/login/discord", UserController.loginDiscord);
+router.post("/login/google", UserController.googleLogin);
 
 module.exports = router;
